@@ -4,7 +4,7 @@ CADDY_VERSION="2.7.6" # Specify a stable release
 
 export ZOPEN_STABLE_TAG="v${CADDY_VERSION}"
 export ZOPEN_STABLE_URL="https://github.com/caddyserver/caddy.git"
-export ZOPEN_STABLE_DEPS="wharf git check_go"
+export ZOPEN_STABLE_DEPS="wharf git check_go parse-gotest"
 export ZOPEN_BUILD_LINE="STABLE"
 export ZOPEN_CATEGORIES="networking"
 export ZOPEN_NAME="caddy"
@@ -14,7 +14,7 @@ export ZOPEN_CONFIGURE="zopen_config"
 export ZOPEN_CONFIGURE_MINIMAL=1
 export ZOPEN_MAKE="skip"
 export ZOPEN_INSTALL="zopen_install"
-export ZOPEN_CHECK="skip"
+export ZOPEN_CHECK="zopen_check"
 export ZOPEN_CLEAN="zopen_clean"
 
 zopen_init()
@@ -74,17 +74,28 @@ zopen_clean()
   rm -rf ../.wharf_cache ../go.work* ../wharf_port ../caddy ../badger_* ../sys
 }
 
+zopen_check()
+{
+  cd caddy
+  go test -v -json ./...
+  cd ..
+}
+
 zopen_check_results()
 {
   dir="$1"
   pfx="$2"
   chk="$1/$2_check.log"
+#    echo "check result in $chk"
+  summary="$(parse-gotest -summary $chk)"
+  total=$(echo "$summary" | grep "total" | cut -d':' -f2)
+  fail=$(echo "$summary" | grep "fail" | cut -d':' -f2)
 
   # Echo the following information to gauge build health
-  echo "actualFailures:0"
-  echo "totalTests:1"
-  echo "expectedFailures:0"
-  echo "expectedTotalTests:1"
+  echo "actualFailures:$fail"
+  echo "totalTests:$total"
+  echo "expectedFailures:32"
+  echo "expectedTotalTests:289"
 }
 
 zopen_get_version()
