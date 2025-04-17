@@ -1,6 +1,6 @@
 # Update bump details accordingly. Use bump check to confirm.
 # bump: caddy-version /CADDY_VERSION="(.*)"/ https://github.com/caddyserver/caddy.git|semver:*
-CADDY_VERSION="2.7.6" # Specify a stable release
+CADDY_VERSION="2.8.1" # Specify a stable release
 
 export ZOPEN_STABLE_TAG="v${CADDY_VERSION}"
 export ZOPEN_STABLE_URL="https://github.com/caddyserver/caddy.git"
